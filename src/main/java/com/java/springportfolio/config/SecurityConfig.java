@@ -16,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -33,11 +36,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**")
-                .permitAll()
-                .antMatchers("/api/posts").permitAll()
-                .antMatchers("/api/topics").permitAll()
-                .antMatchers("/api/topics/**").permitAll()
+                .antMatchers(POST, "/api/auth/signup").permitAll()
+                .antMatchers(POST, "/api/auth/login").permitAll()
+                .antMatchers(GET, "/api/auth/accountVerification/**").permitAll()
+                .antMatchers(GET, "/api/posts/**").permitAll()
+                .antMatchers(GET, "/api/topics/**").permitAll()
+                .antMatchers(GET, "/api/topics/**").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
