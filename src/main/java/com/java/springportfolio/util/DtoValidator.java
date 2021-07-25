@@ -122,7 +122,7 @@ public class DtoValidator {
     }
 
     private void validateMandatoryField(String field, int maxLength, String fieldName) {
-        validateMandatoryField(field, maxLength, fieldName);
+        validateMandatoryField(field, fieldName);
         if (field.length() > maxLength) {
             log.error("'{}' is too long. Max length is - '{}'", fieldName, maxLength);
             throw new PortfolioException(fieldName + " is too long (" + field.length() + "). Max length is - '" + maxLength + "'!");
