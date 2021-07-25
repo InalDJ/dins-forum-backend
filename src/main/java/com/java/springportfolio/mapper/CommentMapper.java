@@ -3,13 +3,15 @@ package com.java.springportfolio.mapper;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.java.springportfolio.dto.CommentRequest;
 import com.java.springportfolio.dto.CommentResponse;
-import com.java.springportfolio.entity.*;
+import com.java.springportfolio.entity.Comment;
+import com.java.springportfolio.entity.Post;
+import com.java.springportfolio.entity.User;
+import com.java.springportfolio.entity.VoteType;
 import com.java.springportfolio.service.CommentVoteService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 @Mapper(componentModel = "spring")
 public abstract class CommentMapper {

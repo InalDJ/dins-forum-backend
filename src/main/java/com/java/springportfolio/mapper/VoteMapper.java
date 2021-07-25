@@ -1,8 +1,11 @@
 package com.java.springportfolio.mapper;
 
-import com.java.springportfolio.dto.TopicRequest;
 import com.java.springportfolio.dto.VoteRequest;
-import com.java.springportfolio.entity.*;
+import com.java.springportfolio.entity.Comment;
+import com.java.springportfolio.entity.CommentVote;
+import com.java.springportfolio.entity.Post;
+import com.java.springportfolio.entity.User;
+import com.java.springportfolio.entity.Vote;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
