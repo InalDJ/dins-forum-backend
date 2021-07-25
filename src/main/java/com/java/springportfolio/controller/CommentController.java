@@ -47,7 +47,7 @@ public class CommentController {
     public ResponseEntity<String> updateComment(@RequestBody CommentRequest commentRequest) {
         dtoValidator.validateCommentRequest(commentRequest);
         commentService.updateComment(commentRequest);
-        return new ResponseEntity<>("A new comment has been created!", HttpStatus.CREATED);
+        return new ResponseEntity<>("The comment has been updated!", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{commentId}")
