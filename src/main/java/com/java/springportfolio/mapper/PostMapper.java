@@ -7,19 +7,22 @@ import com.java.springportfolio.entity.Post;
 import com.java.springportfolio.entity.Topic;
 import com.java.springportfolio.entity.User;
 import com.java.springportfolio.service.PostVoteService;
-import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.java.springportfolio.entity.VoteType.DOWNVOTE;
 import static com.java.springportfolio.entity.VoteType.UPVOTE;
 
 @Mapper(componentModel = "spring")
-@RequiredArgsConstructor
 public abstract class PostMapper {
 
-    private final PostVoteService postVoteService;
+    @Autowired
+    private PostVoteService postVoteService;
+
+    protected PostMapper() {
+    }
 
     @Mapping(target = "postName", source = "postRequest.postName")
     @Mapping(target = "description", source = "postRequest.description")
