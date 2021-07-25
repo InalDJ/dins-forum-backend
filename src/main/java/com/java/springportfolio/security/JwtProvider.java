@@ -96,4 +96,8 @@ public class JwtProvider {
     public Long getJwtExpirationInMillis() {
         return jwtExpirationInMillis;
     }
+
+    public static boolean isTokenExpired(long createdDateMillis, long expirationMillis) {
+        return (Instant.now().toEpochMilli() - createdDateMillis) > expirationMillis;
+    }
 }

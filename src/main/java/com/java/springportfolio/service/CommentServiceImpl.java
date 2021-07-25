@@ -11,12 +11,14 @@ import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.CommentMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -28,34 +30,42 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void createComment(CommentRequest commentRequest) {
+        log.info("Creating a comment...");
         Post post = postRepository.findById(commentRequest.getPostId())
                 .orElseThrow(() -> new ItemNotFoundException("Post with id: " + commentRequest.getPostId() + " has not been found"));
         User currentUser = authService.getCurrentUser();
         commentRepository.save(commentMapper.mapToCreateNewComment(commentRequest, currentUser, post));
+        log.info("The comment has been saved to the database");
     }
 
     @Override
     public void updateComment(CommentRequest commentRequest) {
+        log.info("Updating comment with id: {}'", commentRequest.getId());
         if (commentRequest.getId() == null) {
+            log.error("Comment id is null. The comment cannot be updated!");
             throw new PortfolioException("Comment id is null!");
         }
         Comment comment = commentRepository.findById(commentRequest.getId())
                 .orElseThrow(() -> new ItemNotFoundException("Comment with id: " + commentRequest.getId() + " has not been found!"));
         User currentUser = authService.getCurrentUser();
         if (comment.getUser().getUserId() != currentUser.getUserId()) {
-            throw new PortfolioException("Only comment writers can update comments!");
+            log.error("Only comment authors can update comments!");
+            throw new PortfolioException("Only comment authors can update comments!");
         }
         commentRepository.save(commentMapper.mapToUpdateExistingComment(commentRequest, comment));
+        log.info("Comment with id: '{}' has been saved to the database!", commentRequest.getId());
     }
 
     @Override
     @Transactional
     public void deleteComment(Long commentId) {
+        log.info("Deleting comment with id: '{}'...", commentId);
         boolean commentExists = commentRepository.existsById(commentId);
         if (!commentExists) {
             throw new ItemNotFoundException("The comment does not exist!");
         }
         commentRepository.deleteById(commentId);
+        log.info("Comment with id: '{}' has been deleted!", commentId);
     }
 
     @Override

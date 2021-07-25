@@ -14,11 +14,13 @@ import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.PostMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -32,28 +34,35 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(PostRequest postRequest) {
+        log.info("Creating a post...");
         if (postRepository.existsByPostName(postRequest.getPostName())) {
+            log.error("Post with name: '{}' already exists!", postRequest.getPostName());
             throw new ItemAlreadyExistsException("Post with the name: " + postRequest.getPostName() + " already exists!");
         }
         Topic topic = topicRepository.findById(postRequest.getTopicId())
                 .orElseThrow(() -> new ItemNotFoundException("Topic has not been found!"));
         User currentUser = authService.getCurrentUser();
         postRepository.save(postMapper.mapToCreateNewPost(postRequest, currentUser, topic));
+        log.info("The post with name: '{}' has been saved to the database!", postRequest.getPostName());
     }
 
     @Override
     public void updatePost(PostRequest postRequest) {
+        log.info("Updating post...");
         Post existingPostById = postRepository.findById(postRequest.getPostId())
                 .orElseThrow(() -> new ItemNotFoundException("Post has not been found!"));
         User currentUser = authService.getCurrentUser();
         if (currentUser.getUserId() != existingPostById.getUser().getUserId()) {
+            log.error("Only post creator can edit posts!");
             throw new PortfolioException("Only post creator can edit posts!");
         }
         Post existingPostByName = postRepository.findByPostName(postRequest.getPostName());
         if (existingPostByName != null && existingPostByName.getPostId() != existingPostById.getPostId()) {
-            throw new ItemAlreadyExistsException("Post with the name: " + postRequest.getPostName() + " already exists!");
+            log.error("The Post with name: '{}' already exists!", postRequest.getPostName());
+            throw new ItemAlreadyExistsException("The Post with name: '" + postRequest.getPostName() + "' already exists!");
         }
         postRepository.save(postMapper.mapToUpdateExistingPost(postRequest, existingPostById));
+        log.info("The post with id: '{}' has been successfully updated!", postRequest.getPostId());
     }
 
     @Override
@@ -86,9 +95,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long postId) {
+        log.info("Deleting post with id: '{}'...", postId);
         if (!postRepository.existsById(postId)) {
+            log.error("Post with id: '{}' does not exist!", postId);
             throw new ItemNotFoundException("Post doesn't exist!");
         }
         postRepository.deleteById(postId);
+        log.info("Post with id: '{}' hs been deleted!", postId);
     }
 }

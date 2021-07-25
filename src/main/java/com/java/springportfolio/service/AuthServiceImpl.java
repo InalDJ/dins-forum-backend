@@ -11,6 +11,8 @@ import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
+import static com.java.springportfolio.security.JwtProvider.isTokenExpired;
+
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -34,12 +39,17 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final MailService mailService;
     private final RefreshTokenService refreshTokenService;
+    @Value("${jwt.expiration.time}")
+    private long expirationMillis;
 
     @Override
     public void signUp(RegisterRequest registerRequest) {
+        log.info("Registering user with email: '{}'...", registerRequest.getEmail());
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new PortfolioException("User with the email: " + registerRequest.getEmail() + " already exists!");
+            log.error("User with email: '{}' already exists!", registerRequest.getEmail());
+            throw new PortfolioException("User with email: '" + registerRequest.getEmail() + "' already exists!");
         } else {
+            log.info("Email is unique. Proceeding to registration...");
             User user = new User();
             user.setUsername(registerRequest.getUsername());
             user.setEmail(registerRequest.getEmail());
@@ -50,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
             userRepository.save(user);
             mailService.sendMail(new NotificationEmail("Благодарим Вас за регистрацию на нашем сайте!",
                     user.getEmail(), " Пожалуйста, активируйте Ваш аккаунт, перейдя по ссылке: " + " http://localhost:8080/api/auth/accountVerification/" + user.getVerificationToken()));
+            log.info("The user with email: '{}' has been saved to the database!", registerRequest.getEmail());
         }
     }
 
@@ -64,13 +75,13 @@ public class AuthServiceImpl implements AuthService {
         authenticationResponse.setExpiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()));
         authenticationResponse.setRefreshToken(refreshTokenService.generateRefreshToken().getToken());
         authenticationResponse.setUsername(loginRequest.getUsername());
-        System.out.println(authenticationResponse.getUsername());
-        System.out.println(authenticationResponse.getAuthenticationToken());
+        log.info("User with name: '{}' has logged in successfully!", loginRequest.getUsername());
         return authenticationResponse;
     }
 
     @Override
     public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        log.info("Refreshing token...");
         refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
         String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
@@ -78,6 +89,7 @@ public class AuthServiceImpl implements AuthService {
         authenticationResponse.setRefreshToken(refreshTokenRequest.getRefreshToken());
         authenticationResponse.setExpiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()));
         authenticationResponse.setUsername(refreshTokenRequest.getUsername());
+        log.info("The token has been refreshed!");
         return authenticationResponse;
     }
 
@@ -91,6 +103,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(noRollbackFor = PortfolioException.class)
     public void verifyAccount(String verificationToken) {
+        log.info("Verifying account...");
         fetchUserAndEnable(verificationToken);
     }
 
@@ -103,6 +116,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+        log.info("The user with id: '{}' has been deleted!", id);
     }
 
     @Override
@@ -110,14 +124,14 @@ public class AuthServiceImpl implements AuthService {
     public void fetchUserAndEnable(String verificationToken) {
         User user = userRepository.findByVerificationToken(verificationToken).orElseThrow(() -> new ItemNotFoundException("User has not been found"));
 
-        //check if signup token has expired or not (25 min)
-        if (Instant.now().toEpochMilli() - user.getCreated().toEpochMilli() > 15000000_0) {
-            System.out.println(user.getUserId());
+        if (isTokenExpired(user.getCreated().toEpochMilli(), expirationMillis)) {
             userRepository.deleteById(user.getUserId());
+            log.error("The verification token has been expired!");
             throw new PortfolioException("The verification token has expired!");
         }
         user.setEnabled(true);
         userRepository.save(user);
+        log.info("The user with name: '{}' has been enabled!", user.getUsername());
     }
 
     private String generateVerificationToken() {

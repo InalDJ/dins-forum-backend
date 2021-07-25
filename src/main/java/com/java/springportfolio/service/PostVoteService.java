@@ -9,12 +9,13 @@ import com.java.springportfolio.entity.VoteType;
 import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.mapper.VoteMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostVoteService implements VoteCategoryService {
@@ -40,11 +41,11 @@ public class PostVoteService implements VoteCategoryService {
     }
 
     private void revokeVote(VoteRequest voteRequest, Post post, Vote voteByPostAndUser) {
+        log.info("Revoking vote from post with id: '{}'", post.getPostId());
         switch (voteRequest.getVoteType()) {
             case UPVOTE:
                 decrementVoteCount(post);
                 break;
-
             case DOWNVOTE:
                 incrementVoteCount(post);
                 break;
@@ -53,6 +54,7 @@ public class PostVoteService implements VoteCategoryService {
     }
 
     private void createVote(VoteRequest voteRequest, Post post) {
+        log.info("Creating vote for post with id: '{}'", post.getPostId());
         switch (voteRequest.getVoteType()) {
             case UPVOTE:
                 incrementVoteCount(post);
