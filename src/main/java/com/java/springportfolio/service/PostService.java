@@ -2,7 +2,6 @@ package com.java.springportfolio.service;
 
 import com.java.springportfolio.dto.PostRequest;
 import com.java.springportfolio.dto.PostResponse;
-import com.java.springportfolio.entity.Post;
 
 import java.util.List;
 

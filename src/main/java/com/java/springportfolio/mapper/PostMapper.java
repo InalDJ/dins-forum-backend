@@ -1,18 +1,19 @@
 package com.java.springportfolio.mapper;
 
 import com.github.marlonlom.utilities.timeago.TimeAgo;
-import com.java.springportfolio.dao.VoteRepository;
 import com.java.springportfolio.dto.PostRequest;
 import com.java.springportfolio.dto.PostResponse;
-import com.java.springportfolio.entity.*;
-import com.java.springportfolio.service.AuthService;
+import com.java.springportfolio.entity.Post;
+import com.java.springportfolio.entity.Topic;
+import com.java.springportfolio.entity.User;
 import com.java.springportfolio.service.PostVoteService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
+import static com.java.springportfolio.entity.VoteType.DOWNVOTE;
+import static com.java.springportfolio.entity.VoteType.UPVOTE;
 
 @Mapper(componentModel = "spring")
 public abstract class PostMapper {
@@ -50,11 +51,11 @@ public abstract class PostMapper {
     }
 
     boolean isPostUpVoted(Post post) {
-        return postVoteService.checkVoteType(post, VoteType.UPVOTE);
+        return postVoteService.checkVoteType(post, UPVOTE);
     }
 
     boolean isPostDownVoted(Post post) {
-        return postVoteService.checkVoteType(post, VoteType.DOWNVOTE);
+        return postVoteService.checkVoteType(post, DOWNVOTE);
     }
 
 

@@ -3,7 +3,6 @@ package com.java.springportfolio.service;
 import com.java.springportfolio.dao.UserRepository;
 import com.java.springportfolio.entity.User;
 import com.java.springportfolio.exception.ItemNotFoundException;
-import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.exception.UserNotActivatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

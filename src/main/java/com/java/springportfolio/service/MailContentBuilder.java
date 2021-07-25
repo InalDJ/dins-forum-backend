@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.swing.text.AbstractDocument;
-
 @Service
 public class MailContentBuilder {
 

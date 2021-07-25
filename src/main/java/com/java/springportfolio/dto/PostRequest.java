@@ -1,9 +1,6 @@
 package com.java.springportfolio.dto;
 
-
-
 import org.springframework.lang.Nullable;
-
 
 public class PostRequest {
 

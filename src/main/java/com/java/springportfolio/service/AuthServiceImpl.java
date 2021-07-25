@@ -61,7 +61,6 @@ public class AuthServiceImpl implements AuthService {
             mailService.sendMail(new NotificationEmail("Благодарим Вас за регистрацию на нашем сайте!",
                     user.getEmail(), " Пожалуйста, активируйте Ваш аккаунт, перейдя по ссылке: " + " http://localhost:8080/api/auth/accountVerification/" + user.getVerificationToken()));
         }
-
     }
 
     @Override
@@ -129,7 +128,6 @@ public class AuthServiceImpl implements AuthService {
         }
         user.setEnabled(true);
         userRepository.save(user);
-
     }
 
     private String generateVerificationToken() {
