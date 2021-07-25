@@ -2,7 +2,7 @@ package com.java.springportfolio.service;
 
 import com.java.springportfolio.entity.NotificationEmail;
 import com.java.springportfolio.exception.PortfolioException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -11,16 +11,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
 
     private final JavaMailSender mailSender;
     private final MailContentBuilder mailContentBuilder;
-
-    @Autowired
-    public MailServiceImpl(JavaMailSender mailSender, MailContentBuilder mailContentBuilder) {
-        this.mailSender = mailSender;
-        this.mailContentBuilder = mailContentBuilder;
-    }
 
     @Async
     @Override

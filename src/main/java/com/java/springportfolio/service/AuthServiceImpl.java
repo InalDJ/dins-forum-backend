@@ -10,7 +10,7 @@ import com.java.springportfolio.entity.User;
 import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.security.JwtProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +25,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
@@ -33,17 +34,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final MailService mailService;
     private final RefreshTokenService refreshTokenService;
-
-    @Autowired
-    public AuthServiceImpl(PasswordEncoder passwordEncoder, UserRepository userRepository, AuthenticationManager authenticationManager, JwtProvider jwtProvider,
-                           MailService mailService, RefreshTokenService refreshTokenService) {
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-        this.authenticationManager = authenticationManager;
-        this.jwtProvider = jwtProvider;
-        this.mailService = mailService;
-        this.refreshTokenService = refreshTokenService;
-    }
 
     @Override
     public void signUp(RegisterRequest registerRequest) {

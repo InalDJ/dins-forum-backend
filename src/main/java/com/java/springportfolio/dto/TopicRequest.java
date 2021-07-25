@@ -1,7 +1,15 @@
 package com.java.springportfolio.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TopicRequest {
 
     @Nullable
@@ -9,25 +17,4 @@ public class TopicRequest {
     private String name;
     private String description;
     private Long userId;
-
-    @Nullable
-    public Long getTopicId() {
-        return topicId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
 }

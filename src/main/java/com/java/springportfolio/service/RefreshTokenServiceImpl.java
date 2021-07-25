@@ -4,7 +4,7 @@ import com.java.springportfolio.dao.RefreshTokenRepository;
 import com.java.springportfolio.entity.RefreshToken;
 import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.exception.PortfolioException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,14 +13,10 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     private final RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
-    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
 
     @Override
     public RefreshToken generateRefreshToken() {

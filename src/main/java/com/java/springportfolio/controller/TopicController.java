@@ -4,7 +4,7 @@ import com.java.springportfolio.dto.TopicRequest;
 import com.java.springportfolio.dto.TopicResponse;
 import com.java.springportfolio.service.TopicService;
 import com.java.springportfolio.util.DtoValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,16 +20,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/topics")
+@RequiredArgsConstructor
 public class TopicController {
 
     private final TopicService topicService;
     private final DtoValidator dtoValidator;
-
-    @Autowired
-    public TopicController(TopicService topicService, DtoValidator dtoValidator) {
-        this.topicService = topicService;
-        this.dtoValidator = dtoValidator;
-    }
 
     @PostMapping
     public ResponseEntity<String> createTopic(@RequestBody TopicRequest topicRequest) {

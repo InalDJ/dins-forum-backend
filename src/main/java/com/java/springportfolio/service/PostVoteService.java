@@ -8,6 +8,7 @@ import com.java.springportfolio.entity.Vote;
 import com.java.springportfolio.entity.VoteType;
 import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.mapper.VoteMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,21 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PostVoteService implements VoteCategoryService {
 
     private final VoteRepository voteRepository;
     private final PostRepository postRepository;
     private final AuthService authService;
     private final VoteMapper voteMapper;
-
-    @Autowired
-    public PostVoteService(VoteRepository voteRepository,
-                           PostRepository postRepository, AuthService authService, VoteMapper voteMapper) {
-        this.voteRepository = voteRepository;
-        this.postRepository = postRepository;
-        this.authService = authService;
-        this.voteMapper = voteMapper;
-    }
 
     @Override
     @Transactional

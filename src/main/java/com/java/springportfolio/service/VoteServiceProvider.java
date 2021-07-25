@@ -2,20 +2,15 @@ package com.java.springportfolio.service;
 
 import com.java.springportfolio.dto.VoteRequest;
 import com.java.springportfolio.exception.PortfolioException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class VoteServiceProvider {
 
     private final PostVoteService postVoteService;
     private final CommentVoteService commentVoteService;
-
-    @Autowired
-    public VoteServiceProvider(PostVoteService postVoteService, CommentVoteService commentVoteService) {
-        this.postVoteService = postVoteService;
-        this.commentVoteService = commentVoteService;
-    }
 
     public VoteCategoryService provide(VoteRequest voteRequest) {
         switch (voteRequest.getVoteCategory()) {

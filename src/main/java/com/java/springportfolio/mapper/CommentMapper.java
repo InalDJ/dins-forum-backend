@@ -8,19 +8,16 @@ import com.java.springportfolio.entity.Post;
 import com.java.springportfolio.entity.User;
 import com.java.springportfolio.entity.VoteType;
 import com.java.springportfolio.service.CommentVoteService;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring")
+@RequiredArgsConstructor
 public abstract class CommentMapper {
 
-    @Autowired
-    private CommentVoteService commentVoteService;
-
-    protected CommentMapper() {
-    }
+    private final CommentVoteService commentVoteService;
 
     @Mapping(target = "text", source = "commentRequest.text")
     @Mapping(target = "voteCount", constant = "0")

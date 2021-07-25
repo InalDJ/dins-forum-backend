@@ -10,27 +10,20 @@ import com.java.springportfolio.exception.ItemAlreadyExistsException;
 import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.TopicMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TopicServiceImpl implements TopicService {
 
     private final TopicRepository topicRepository;
     private final TopicMapper topicMapper;
     private final UserRepository userRepository;
     private final AuthService authService;
-
-    @Autowired
-    public TopicServiceImpl(TopicRepository topicRepository, TopicMapper topicMapper, UserRepository userRepository, AuthService authService) {
-        this.topicRepository = topicRepository;
-        this.topicMapper = topicMapper;
-        this.userRepository = userRepository;
-        this.authService = authService;
-    }
 
     @Override
     public void updateTopic(TopicRequest topicRequest) {

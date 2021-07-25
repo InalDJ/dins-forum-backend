@@ -13,13 +13,14 @@ import com.java.springportfolio.exception.ItemAlreadyExistsException;
 import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.PostMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
@@ -28,17 +29,6 @@ public class PostServiceImpl implements PostService {
     private final VoteRepository voteRepository;
     private final PostMapper postMapper;
     private final AuthService authService;
-
-    @Autowired
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository,
-                           TopicRepository topicRepository, VoteRepository voteRepository, PostMapper postMapper, AuthService authService) {
-        this.postRepository = postRepository;
-        this.userRepository = userRepository;
-        this.topicRepository = topicRepository;
-        this.voteRepository = voteRepository;
-        this.postMapper = postMapper;
-        this.authService = authService;
-    }
 
     @Override
     public void createPost(PostRequest postRequest) {

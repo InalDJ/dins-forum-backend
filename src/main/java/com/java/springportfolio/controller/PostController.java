@@ -4,7 +4,7 @@ import com.java.springportfolio.dto.PostRequest;
 import com.java.springportfolio.dto.PostResponse;
 import com.java.springportfolio.service.PostService;
 import com.java.springportfolio.util.DtoValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,16 +20,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final DtoValidator dtoValidator;
-
-    @Autowired
-    public PostController(PostService postService, DtoValidator dtoValidator) {
-        this.postService = postService;
-        this.dtoValidator = dtoValidator;
-    }
 
     @PostMapping
     public ResponseEntity<String> createPost(@RequestBody PostRequest postRequest) {

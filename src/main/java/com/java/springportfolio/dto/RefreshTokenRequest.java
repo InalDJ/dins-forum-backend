@@ -1,17 +1,18 @@
 package com.java.springportfolio.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.NotBlank;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RefreshTokenRequest {
     @NotBlank
     private String refreshToken;
     private String username;
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public String getUsername() {
-        return username;
-    }
 }

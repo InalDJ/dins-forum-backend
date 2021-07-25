@@ -1,5 +1,12 @@
 package com.java.springportfolio.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +17,12 @@ import java.time.Instant;
 
 @Entity
 @Table
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+@Getter
+@Setter
+@Builder
 public class RefreshToken {
 
     @Id
@@ -22,37 +35,4 @@ public class RefreshToken {
 
     @Column
     private Instant createdDate;
-
-    public RefreshToken() {
-    }
-
-    public RefreshToken(Long id, String token, Instant createdDate) {
-        this.id = id;
-        this.token = token;
-        this.createdDate = createdDate;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Instant getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Instant createdDate) {
-        this.createdDate = createdDate;
-    }
 }

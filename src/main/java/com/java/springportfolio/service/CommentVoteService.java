@@ -8,28 +8,20 @@ import com.java.springportfolio.entity.CommentVote;
 import com.java.springportfolio.entity.VoteType;
 import com.java.springportfolio.exception.ItemNotFoundException;
 import com.java.springportfolio.mapper.VoteMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CommentVoteService implements VoteCategoryService {
 
     private final CommentVoteRepository commentVoteRepository;
     private final CommentRepository commentRepository;
     private final AuthService authService;
     private final VoteMapper voteMapper;
-
-    @Autowired
-    public CommentVoteService(CommentVoteRepository commentVoteRepository,
-                              CommentRepository commentRepository, AuthService authService, VoteMapper voteMapper) {
-        this.commentVoteRepository = commentVoteRepository;
-        this.commentRepository = commentRepository;
-        this.authService = authService;
-        this.voteMapper = voteMapper;
-    }
 
     @Override
     @Transactional

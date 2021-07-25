@@ -1,5 +1,12 @@
 package com.java.springportfolio.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.validation.constraints.NotNull;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +20,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+@Getter
+@Setter
+@Builder
 public class Vote {
 
     @Id
@@ -32,46 +45,4 @@ public class Vote {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
-
-    public Vote() {
-    }
-
-    public Vote(Long voteId, VoteType voteType, @NotNull Post post, User user) {
-        this.voteId = voteId;
-        this.voteType = voteType;
-        this.post = post;
-        this.user = user;
-    }
-
-    public Long getVoteId() {
-        return voteId;
-    }
-
-    public void setVoteId(Long voteId) {
-        this.voteId = voteId;
-    }
-
-    public VoteType getVoteType() {
-        return voteType;
-    }
-
-    public void setVoteType(VoteType voteType) {
-        this.voteType = voteType;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
