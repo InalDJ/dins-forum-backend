@@ -20,7 +20,7 @@ public class PostResponse {
     private String topicName;
     private Integer voteCount;
     private String duration;
-    private Instant createdDate;
+    private String createdDate;
     private boolean upVote;
     private boolean downVote;
 }

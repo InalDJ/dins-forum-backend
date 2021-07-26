@@ -26,7 +26,7 @@ public abstract class TopicMapper {
     @Mapping(target = "name", source = "topic.name")
     @Mapping(target = "description", source = "topic.description")
     @Mapping(target = "duration", expression = "java(getDuration(topic))")
-    @Mapping(target = "createdDate", source = "topic.createdDate")
+    @Mapping(target = "createdDate", expression = "java(topic.getCreatedDate().toString())")
     @Mapping(target = "userName", source = "topic.user.username")
     @Mapping(target = "numberOfPosts", expression = "java(topic.getPosts().size())")
     public abstract TopicResponse mapToDto(Topic topic);

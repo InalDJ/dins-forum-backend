@@ -42,6 +42,7 @@ public abstract class PostMapper {
     @Mapping(target = "voteCount", source = "post.voteCount")
     @Mapping(target = "description", source = "post.description")
     @Mapping(target = "duration", expression = "java(getDuration(post))")
+    @Mapping(target = "createdDate", expression = "java(post.getCreatedDate().toString())")
     @Mapping(target = "upVote", expression = "java(isPostUpVoted(post))")
     @Mapping(target = "downVote", expression = "java(isPostDownVoted(post))")
     public abstract PostResponse mapToDto(Post post);

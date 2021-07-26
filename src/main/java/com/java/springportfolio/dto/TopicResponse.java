@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,7 +14,7 @@ public class TopicResponse {
     private Long id;
     private String name;
     private String description;
-    private Instant createdDate;
+    private String createdDate;
     private String userName;
     private Integer numberOfPosts;
     private String duration;
