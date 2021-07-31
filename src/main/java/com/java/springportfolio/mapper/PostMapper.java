@@ -37,6 +37,7 @@ public abstract class PostMapper {
     public abstract Post mapToUpdateExistingPost(PostRequest postRequest, @MappingTarget Post post);
 
     @Mapping(target = "id", source = "post.postId")
+    @Mapping(target = "postName", source = "post.postName")
     @Mapping(target = "topicName", source = "post.topic.name")
     @Mapping(target = "userName", source = "post.user.username")
     @Mapping(target = "voteCount", source = "post.voteCount")
@@ -58,7 +59,5 @@ public abstract class PostMapper {
     boolean isPostDownVoted(Post post) {
         return postVoteService.checkVoteType(post, DOWNVOTE);
     }
-
-
 }
 
