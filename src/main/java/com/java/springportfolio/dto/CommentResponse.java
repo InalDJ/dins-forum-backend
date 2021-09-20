@@ -26,4 +26,5 @@ public class CommentResponse {
     private String duration;
     private String userName;
     private Long postId;
+    private Integer subCommentCount;
 }

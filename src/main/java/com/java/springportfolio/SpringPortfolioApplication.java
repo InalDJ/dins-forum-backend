@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @EnableAsync
-@SpringBootApplication//(exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class SpringPortfolioApplication {
 
     public static void main(String[] args) {

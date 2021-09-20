@@ -26,7 +26,7 @@ public class CommentVoteService implements VoteCategoryService {
     @Override
     @Transactional
     public void vote(VoteRequest voteRequest) {
-        Comment comment = commentRepository.findById(voteRequest.getItemId())
+        Comment comment = commentRepository.findById(voteRequest.getCommentId())
                 .orElseThrow(() -> new ItemNotFoundException("The comment has not been found"));
         Optional<CommentVote> commentVoteByPostAndUser = commentVoteRepository
                 .findTopByPostAndUserOrderByVoteIdDesc(comment, authService.getCurrentUser());

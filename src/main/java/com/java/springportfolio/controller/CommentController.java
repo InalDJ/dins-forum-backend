@@ -7,14 +7,7 @@ import com.java.springportfolio.util.DtoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,9 +24,19 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllCommentsSortedByCreationDate());
     }
 
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<List<CommentResponse>> getAllCommentsByPost(@PathVariable Long postId) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllCommentsByPost(postId));
+    }
+
     @GetMapping("/{commentId}")
     public ResponseEntity<CommentResponse> getComment(@PathVariable Long commentId) {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getComment(commentId));
+    }
+
+    @GetMapping("/post/{postId}/comment/{parentCommentId}")
+    public ResponseEntity<List<CommentResponse>> getSubCommentsByPostAndParentComment(@PathVariable Long postId, @PathVariable Long parentCommentId) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentsByPostAndParentComment(postId, parentCommentId));
     }
 
     @PostMapping

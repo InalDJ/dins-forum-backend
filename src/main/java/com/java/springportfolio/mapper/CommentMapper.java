@@ -7,6 +7,7 @@ import com.java.springportfolio.entity.Comment;
 import com.java.springportfolio.entity.Post;
 import com.java.springportfolio.entity.User;
 import com.java.springportfolio.entity.VoteType;
+import com.java.springportfolio.service.CommentService;
 import com.java.springportfolio.service.CommentVoteService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,6 +26,7 @@ public abstract class CommentMapper {
     @Mapping(target = "text", source = "commentRequest.text")
     @Mapping(target = "voteCount", constant = "0")
     @Mapping(target = "parentCommentId", expression = "java(checkIfCommentHasAParent(commentRequest))")
+    @Mapping(target = "subCommentCount", constant = "0")
     @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
     @Mapping(target = "user", source = "user")
     @Mapping(target = "post", source = "post")
@@ -43,6 +45,7 @@ public abstract class CommentMapper {
     @Mapping(target = "duration", expression = "java(getDuration(comment))")
     @Mapping(target = "userName", source = "comment.user.username")
     @Mapping(target = "postId", source = "comment.post.postId")
+    @Mapping(target = "subCommentCount", source = "comment.subCommentCount")
     public abstract CommentResponse mapToDto(Comment comment);
 
     String getDuration(Comment comment) {

@@ -15,5 +15,9 @@ public interface CommentService {
 
     List<CommentResponse> getAllCommentsSortedByCreationDate();
 
+    List<CommentResponse> getCommentsByPostAndParentComment(Long postId, Long parentCommentId);
+
+    List<CommentResponse> getAllCommentsByPost(Long postId);
+
     CommentResponse getComment(Long commentId);
 }

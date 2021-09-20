@@ -28,12 +28,22 @@ public class CommentServiceImpl implements CommentService {
     private final AuthService authService;
     private final CommentMapper commentMapper;
 
+    @Transactional
     @Override
     public void createComment(CommentRequest commentRequest) {
         log.info("Creating a comment...");
         Post post = postRepository.findById(commentRequest.getPostId())
                 .orElseThrow(() -> new ItemNotFoundException("Post with id: " + commentRequest.getPostId() + " has not been found"));
         User currentUser = authService.getCurrentUser();
+        if (commentRequest.getParentCommentId() != null) {
+            boolean parentCommentExists = commentRepository.existsById(commentRequest.getParentCommentId());
+            if (!parentCommentExists) {
+                log.info("Parent comment with id - {} has not been found!", commentRequest.getParentCommentId());
+                commentRequest.setParentCommentId(null);
+            } else {
+                commentRepository.incrementSubcommentCount(commentRequest.getParentCommentId());
+            }
+        }
         commentRepository.save(commentMapper.mapToCreateNewComment(commentRequest, currentUser, post));
         log.info("The comment has been saved to the database");
     }
@@ -60,12 +70,12 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void deleteComment(Long commentId) {
         log.info("Deleting comment with id: '{}'...", commentId);
-        boolean commentExists = commentRepository.existsById(commentId);
-        if (!commentExists) {
-            throw new ItemNotFoundException("The comment does not exist!");
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ItemNotFoundException("The comment does not exist!"));
+        if (comment.getParentCommentId() != null && comment.getParentCommentId() != 0) {
+            log.info("Comment has a parent comment. Decrementing subCommentCount");
+            commentRepository.decrementSubcommentCount(comment.getParentCommentId());
         }
         commentRepository.deleteById(commentId);
-        log.info("Comment with id: '{}' has been deleted!", commentId);
     }
 
     @Override
@@ -79,6 +89,19 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentResponse> getAllCommentsSortedByCreationDate() {
         List<Comment> comments = commentRepository.findAllCommentsOrderByCreatedDate()
                 .orElseThrow(() -> new ItemNotFoundException("The comment list is null!"));
+        return comments.stream().map(commentMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentResponse> getAllCommentsByPost(Long postId) {
+        List<Comment> comments = commentRepository.findAllCommentsByPost(postId).orElseThrow(() -> new ItemNotFoundException("The comment list is null!"));
+        return comments.stream().map(commentMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentResponse> getCommentsByPostAndParentComment(Long postId, Long parentCommentId) {
+        log.info("Parentcommentid = " + parentCommentId);
+        List<Comment> comments = commentRepository.findAllCommentsByPostAndParentCommentId(postId, parentCommentId).orElseThrow(() -> new ItemNotFoundException("The comment list is null!"));
         return comments.stream().map(commentMapper::mapToDto).collect(Collectors.toList());
     }
 }

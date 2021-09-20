@@ -28,7 +28,7 @@ public class PostVoteService implements VoteCategoryService {
     @Override
     @Transactional
     public void vote(VoteRequest voteRequest) {
-        Post post = postRepository.findById(voteRequest.getItemId())
+        Post post = postRepository.findById(voteRequest.getPostId())
                 .orElseThrow(() -> new ItemNotFoundException("Post has not been found!"));
         Optional<Vote> voteByPostAndUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
 

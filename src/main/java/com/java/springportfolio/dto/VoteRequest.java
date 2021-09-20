@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 @Data
 @Builder
@@ -15,5 +16,8 @@ public class VoteRequest {
 
     private VoteCategory voteCategory;
     private VoteType voteType;
-    private Long itemId;
+    @Nullable
+    private Long postId;
+    @Nullable
+    private Long commentId;
 }

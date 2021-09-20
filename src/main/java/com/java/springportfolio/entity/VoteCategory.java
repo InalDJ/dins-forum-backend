@@ -9,13 +9,12 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum VoteCategory {
-    POSTVOTE("post"), COMMENTVOTE("comment");
-
-    private final String category;
+    POSTVOTE,
+    COMMENTVOTE;
 
     public static VoteCategory lookup(String category) {
         return Arrays.stream(VoteCategory.values())
-                .filter(value -> value.getCategory().equals(category))
+                .filter(value -> value.name().equals(category))
                 .findAny()
                 .orElseThrow(() -> new ItemNotFoundException("Vote category not found"));
     }
