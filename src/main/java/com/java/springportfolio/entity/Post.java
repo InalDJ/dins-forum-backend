@@ -28,7 +28,6 @@ import java.util.List;
 @Table
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @Getter
 @Setter
 @Builder

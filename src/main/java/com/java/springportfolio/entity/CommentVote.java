@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 @Table
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @Getter
 @Setter
 @Builder

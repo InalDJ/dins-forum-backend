@@ -28,13 +28,17 @@ public class CommentVoteService implements VoteCategoryService {
     public void vote(VoteRequest voteRequest) {
         Comment comment = commentRepository.findById(voteRequest.getCommentId())
                 .orElseThrow(() -> new ItemNotFoundException("The comment has not been found"));
-        Optional<CommentVote> commentVoteByPostAndUser = commentVoteRepository
-                .findTopByPostAndUserOrderByVoteIdDesc(comment, authService.getCurrentUser());
-
-        if (commentVoteByPostAndUser.isPresent() && voteRequest.getVoteType().equals(commentVoteByPostAndUser.get().getVoteType())) {
-            revokeVote(voteRequest, comment, commentVoteByPostAndUser.get());
-        } else {
+        CommentVote commentVoteByPostAndUser = commentVoteRepository
+                .findTopByPostAndUserOrderByVoteIdDesc(comment, authService.getCurrentUser()).orElse(null);
+        if (commentVoteByPostAndUser == null) {
             createVote(voteRequest, comment);
+        } else {
+            if (voteRequest.getVoteType().equals(commentVoteByPostAndUser.getVoteType())) {
+                revokeVote(voteRequest, comment, commentVoteByPostAndUser);
+            } else {
+                revokeVote(voteRequest, comment, commentVoteByPostAndUser);
+                createVote(voteRequest, comment);
+            }
         }
         commentRepository.save(comment);
     }
@@ -50,19 +54,22 @@ public class CommentVoteService implements VoteCategoryService {
         return false;
     }
 
-    private void revokeVote(VoteRequest voteRequest, Comment comment, CommentVote commentVoteByPostAndUser) {
-        switch (voteRequest.getVoteType()) {
-            case UPVOTE:
-                decrementVoteCount(comment);
-                break;
-            case DOWNVOTE:
-                incrementVoteCount(comment);
-                break;
+    @Transactional
+    void revokeVote(VoteRequest voteRequest, Comment comment, CommentVote commentVoteByPostAndUser) {
+        if (voteRequest.getVoteType().equals(commentVoteByPostAndUser.getVoteType())) {
+            changeVoteCountReversed(voteRequest, comment);
+        } else {
+            changeVoteCount(voteRequest, comment);
         }
         commentVoteRepository.deleteById(commentVoteByPostAndUser.getVoteId());
     }
 
     private void createVote(VoteRequest voteRequest, Comment comment) {
+        changeVoteCount(voteRequest, comment);
+        commentVoteRepository.save(voteMapper.mapToCommentVote(voteRequest, authService.getCurrentUser(), comment));
+    }
+
+    private void changeVoteCount(VoteRequest voteRequest, Comment comment) {
         switch (voteRequest.getVoteType()) {
             case UPVOTE:
                 incrementVoteCount(comment);
@@ -71,7 +78,17 @@ public class CommentVoteService implements VoteCategoryService {
                 decrementVoteCount(comment);
                 break;
         }
-        commentVoteRepository.save(voteMapper.mapToCommentVote(voteRequest, authService.getCurrentUser(), comment));
+    }
+
+    private void changeVoteCountReversed(VoteRequest voteRequest, Comment comment) {
+        switch (voteRequest.getVoteType()) {
+            case UPVOTE:
+                decrementVoteCount(comment);
+                break;
+            case DOWNVOTE:
+                incrementVoteCount(comment);
+                break;
+        }
     }
 
     private void incrementVoteCount(Comment comment) {

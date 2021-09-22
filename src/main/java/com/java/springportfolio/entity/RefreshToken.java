@@ -19,7 +19,6 @@ import java.time.Instant;
 @Table
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @Getter
 @Setter
 @Builder

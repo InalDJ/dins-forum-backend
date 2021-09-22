@@ -30,31 +30,30 @@ public class PostVoteService implements VoteCategoryService {
     public void vote(VoteRequest voteRequest) {
         Post post = postRepository.findById(voteRequest.getPostId())
                 .orElseThrow(() -> new ItemNotFoundException("Post has not been found!"));
-        Optional<Vote> voteByPostAndUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
-
-        if (voteByPostAndUser.isPresent() && voteByPostAndUser.get().getVoteType().equals(voteRequest.getVoteType())) {
-            revokeVote(voteRequest, post, voteByPostAndUser.get());
-        } else {
+        Vote voteByPostAndUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser()).orElse(null);
+        if (voteByPostAndUser == null) {
             createVote(voteRequest, post);
+        } else {
+            if (voteRequest.getVoteType().equals(voteByPostAndUser.getVoteType())) {
+                revokeVote(voteRequest, post, voteByPostAndUser);
+            } else {
+                revokeVote(voteRequest, post, voteByPostAndUser);
+                createVote(voteRequest, post);
+            }
         }
         postRepository.save(post);
     }
 
     private void revokeVote(VoteRequest voteRequest, Post post, Vote voteByPostAndUser) {
-        log.info("Revoking vote from post with id: '{}'", post.getPostId());
-        switch (voteRequest.getVoteType()) {
-            case UPVOTE:
-                decrementVoteCount(post);
-                break;
-            case DOWNVOTE:
-                incrementVoteCount(post);
-                break;
+        if (voteRequest.getVoteType().equals(voteByPostAndUser.getVoteType())) {
+            changeVoteCountReversed(voteRequest, post);
+        } else {
+            changeVoteCount(voteRequest, post);
         }
         voteRepository.deleteById(voteByPostAndUser.getVoteId());
     }
 
     private void createVote(VoteRequest voteRequest, Post post) {
-        log.info("Creating vote for post with id: '{}'", post.getPostId());
         switch (voteRequest.getVoteType()) {
             case UPVOTE:
                 incrementVoteCount(post);
@@ -64,6 +63,28 @@ public class PostVoteService implements VoteCategoryService {
                 break;
         }
         voteRepository.save(voteMapper.mapToPostVote(voteRequest, authService.getCurrentUser(), post));
+    }
+
+    private void changeVoteCount(VoteRequest voteRequest, Post post) {
+        switch (voteRequest.getVoteType()) {
+            case UPVOTE:
+                incrementVoteCount(post);
+                break;
+            case DOWNVOTE:
+                decrementVoteCount(post);
+                break;
+        }
+    }
+
+    private void changeVoteCountReversed(VoteRequest voteRequest, Post post) {
+        switch (voteRequest.getVoteType()) {
+            case UPVOTE:
+                decrementVoteCount(post);
+                break;
+            case DOWNVOTE:
+                incrementVoteCount(post);
+                break;
+        }
     }
 
     private void incrementVoteCount(Post post) {
