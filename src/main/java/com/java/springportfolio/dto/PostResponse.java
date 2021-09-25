@@ -21,6 +21,7 @@ public class PostResponse {
     private String createdDate;
     private boolean upVote;
     private boolean downVote;
+    private Integer commentCount;
 }
 
 

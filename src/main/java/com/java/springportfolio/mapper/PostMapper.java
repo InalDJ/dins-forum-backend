@@ -46,6 +46,7 @@ public abstract class PostMapper {
     @Mapping(target = "createdDate", expression = "java(post.getCreatedDate().toString())")
     @Mapping(target = "upVote", expression = "java(isPostUpVoted(post))")
     @Mapping(target = "downVote", expression = "java(isPostDownVoted(post))")
+    @Mapping(target = "commentCount", expression = "java(getCommentCount(post))")
     public abstract PostResponse mapToDto(Post post);
 
     String getDuration(Post post) {
@@ -58,6 +59,10 @@ public abstract class PostMapper {
 
     boolean isPostDownVoted(Post post) {
         return postVoteService.checkVoteType(post, DOWNVOTE);
+    }
+
+    Integer getCommentCount(Post post) {
+        return post.getComments() != null ? post.getComments().size() : 0;
     }
 }
 
