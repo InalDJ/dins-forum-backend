@@ -12,11 +12,17 @@ import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.CommentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.java.springportfolio.service.OrderType.NEW;
+import static com.java.springportfolio.service.OrderType.POPULAR;
+import static com.java.springportfolio.service.OrderType.findOrderType;
 
 @Slf4j
 @Service
@@ -86,10 +92,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentResponse> getAllCommentsSortedByCreationDate() {
-        List<Comment> comments = commentRepository.findAllCommentsOrderByCreatedDate()
-                .orElseThrow(() -> new ItemNotFoundException("The comment list is null!"));
-        return comments.stream().map(commentMapper::mapToDto).collect(Collectors.toList());
+    public List<CommentResponse> getAllComments(String orderType, int pageNumber, int commentsQuantity) {
+        return getPostsSortedByOrderType(orderType, pageNumber, commentsQuantity);
     }
 
     @Override
@@ -103,5 +107,28 @@ public class CommentServiceImpl implements CommentService {
         log.info("Parentcommentid = " + parentCommentId);
         List<Comment> comments = commentRepository.findAllCommentsByPostAndParentCommentId(postId, parentCommentId).orElseThrow(() -> new ItemNotFoundException("The comment list is null!"));
         return comments.stream().map(commentMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    private List<CommentResponse> getPostsSortedByOrderType(String orderType, int pageNumber, int commentQuantity) {
+        if (orderType == null) {
+            throw new PortfolioException("Order type is null!");
+        }
+        Pageable pageable = getPageable(pageNumber, commentQuantity);
+        OrderType existingOrderType = findOrderType(orderType);
+        if (existingOrderType.equals(NEW)) {
+            List<Comment> comments = commentRepository.findAllCommentsOrderByCreatedDate(pageable)
+                    .orElseThrow(() -> new ItemNotFoundException("There are no existing comments!"));
+            return comments.stream().map(commentMapper::mapToDto).collect(Collectors.toList());
+        }
+        if (existingOrderType.equals(POPULAR)) {
+            List<Comment> comments = commentRepository.findAllCommentsOrderByNumberOfVotes(pageable)
+                    .orElseThrow(() -> new ItemNotFoundException("There are no existing comments!"));
+            return comments.stream().map(commentMapper::mapToDto).collect(Collectors.toList());
+        }
+        throw new ItemNotFoundException("There are no comments!");
+    }
+
+    private Pageable getPageable(int pageNumber, int postsPerPage) {
+        return PageRequest.of(pageNumber, postsPerPage);
     }
 }

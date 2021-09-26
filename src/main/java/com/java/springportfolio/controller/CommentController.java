@@ -19,9 +19,11 @@ public class CommentController {
     private final CommentService commentService;
     private final DtoValidator dtoValidator;
 
-    @GetMapping("/newest")
-    public ResponseEntity<List<CommentResponse>> getAllCommentsSortedByCreationDate() {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllCommentsSortedByCreationDate());
+    @GetMapping
+    public ResponseEntity<List<CommentResponse>> getAllComments(@RequestParam String orderType,
+                                                                @RequestParam int pageNumber,
+                                                                @RequestParam int commentsQuantity) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllComments(orderType, pageNumber, commentsQuantity));
     }
 
     @GetMapping("/post/{postId}")

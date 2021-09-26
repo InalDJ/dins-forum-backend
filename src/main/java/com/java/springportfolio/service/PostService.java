@@ -13,9 +13,7 @@ public interface PostService {
 
     PostResponse getPost(Long postId);
 
-    List<PostResponse> getAllPostsSortedByCreationDate();
-
-    List<PostResponse> getAllPostsSortedByVoteCount();
+    List<PostResponse> getAllPosts(String orderType, int pageNumber, int postsPerPage);
 
     List<PostResponse> getAllPostsByTopic(String topic);
 

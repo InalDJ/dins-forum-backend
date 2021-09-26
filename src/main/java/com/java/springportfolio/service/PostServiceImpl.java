@@ -2,8 +2,6 @@ package com.java.springportfolio.service;
 
 import com.java.springportfolio.dao.PostRepository;
 import com.java.springportfolio.dao.TopicRepository;
-import com.java.springportfolio.dao.UserRepository;
-import com.java.springportfolio.dao.VoteRepository;
 import com.java.springportfolio.dto.PostRequest;
 import com.java.springportfolio.dto.PostResponse;
 import com.java.springportfolio.entity.Post;
@@ -15,10 +13,16 @@ import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.PostMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.java.springportfolio.service.OrderType.NEW;
+import static com.java.springportfolio.service.OrderType.POPULAR;
+import static com.java.springportfolio.service.OrderType.findOrderType;
 
 @Slf4j
 @Service
@@ -26,9 +30,7 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final TopicRepository topicRepository;
-    private final VoteRepository voteRepository;
     private final PostMapper postMapper;
     private final AuthService authService;
 
@@ -56,7 +58,7 @@ public class PostServiceImpl implements PostService {
             log.error("Only post creator can edit posts!");
             throw new PortfolioException("Only post creator can edit posts!");
         }
-        Post existingPostByName = postRepository.findByPostName(postRequest.getPostName());
+        Post existingPostByName = postRepository.findByPostName(postRequest.getPostName()).orElse(null);
         if (existingPostByName != null && existingPostByName.getPostId() != existingPostById.getPostId()) {
             log.error("The Post with name: '{}' already exists!", postRequest.getPostName());
             throw new ItemAlreadyExistsException("The Post with name: '" + postRequest.getPostName() + "' already exists!");
@@ -73,17 +75,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getAllPostsSortedByCreationDate() {
-        List<Post> posts = postRepository.findAllPostsOrderByCreatedDate()
-                .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
-        return posts.stream().map(postMapper::mapToDto).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<PostResponse> getAllPostsSortedByVoteCount() {
-        List<Post> posts = postRepository.findAllPostsOrderByNumberOfVotes()
-                .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
-        return posts.stream().map(postMapper::mapToDto).collect(Collectors.toList());
+    public List<PostResponse> getAllPosts(String orderType, int pageNumber, int postsPerPage) {
+        return getPostsSortedByOrderType(orderType, pageNumber, postsPerPage);
     }
 
     @Override
@@ -102,5 +95,28 @@ public class PostServiceImpl implements PostService {
         }
         postRepository.deleteById(postId);
         log.info("Post with id: '{}' hs been deleted!", postId);
+    }
+
+    private List<PostResponse> getPostsSortedByOrderType(String orderType, int pageNumber, int postsPerPage) {
+        if (orderType == null) {
+            throw new PortfolioException("Order type is null!");
+        }
+        Pageable pageable = getPageable(pageNumber, postsPerPage);
+        OrderType existingOrderType = findOrderType(orderType);
+        if (existingOrderType.equals(NEW)) {
+            List<Post> posts = postRepository.findAllPostsOrderByCreatedDate(pageable)
+                    .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
+            return posts.stream().map(postMapper::mapToDto).collect(Collectors.toList());
+        }
+        if (existingOrderType.equals(POPULAR)) {
+            List<Post> posts = postRepository.findAllPostsOrderByNumberOfVotes(pageable)
+                    .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
+            return posts.stream().map(postMapper::mapToDto).collect(Collectors.toList());
+        }
+        throw new ItemNotFoundException("There are no posts!");
+    }
+
+    private Pageable getPageable(int pageNumber, int postsPerPage) {
+        return PageRequest.of(pageNumber, postsPerPage);
     }
 }

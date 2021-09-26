@@ -13,7 +13,7 @@ public interface CommentService {
 
     void deleteComment(Long commentId);
 
-    List<CommentResponse> getAllCommentsSortedByCreationDate();
+    List<CommentResponse> getAllComments(String orderType, int pageNumber, int commentsQuantity);
 
     List<CommentResponse> getCommentsByPostAndParentComment(Long postId, Long parentCommentId);
 
