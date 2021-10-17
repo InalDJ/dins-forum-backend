@@ -29,7 +29,7 @@ public class DtoValidator {
     private static final int PASSWORD_LENGTH = 40;
     private static final int TEXT_LENGTH = 500;
     private static final int POST_NAME_LENGTH = 100;
-    private static final int DESCRIPTION_LENGTH = 500;
+    private static final int DESCRIPTION_LENGTH = 50000;
 
     public void validateTopicRequest(TopicRequest topicRequest) {
         if (topicRequest == null) {

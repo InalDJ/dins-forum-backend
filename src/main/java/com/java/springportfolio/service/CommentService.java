@@ -1,5 +1,6 @@
 package com.java.springportfolio.service;
 
+import com.java.springportfolio.dto.CommentPayload;
 import com.java.springportfolio.dto.CommentRequest;
 import com.java.springportfolio.dto.CommentResponse;
 
@@ -13,11 +14,11 @@ public interface CommentService {
 
     void deleteComment(Long commentId);
 
-    List<CommentResponse> getAllComments(String orderType, int pageNumber, int commentsQuantity);
+    CommentResponse getAllComments(String orderType, int pageNumber, int commentsQuantity);
 
-    List<CommentResponse> getCommentsByPostAndParentComment(Long postId, Long parentCommentId);
+    List<CommentPayload> getCommentsByPostAndParentComment(Long postId, Long parentCommentId);
 
-    List<CommentResponse> getAllCommentsByPost(Long postId);
+    CommentResponse getAllCommentsByPost(Long postId, int pageNumber, int commentsQuantity);
 
-    CommentResponse getComment(Long commentId);
+    CommentPayload getComment(Long commentId);
 }

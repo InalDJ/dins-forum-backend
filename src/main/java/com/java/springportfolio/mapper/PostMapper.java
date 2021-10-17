@@ -1,8 +1,7 @@
 package com.java.springportfolio.mapper;
 
 import com.github.marlonlom.utilities.timeago.TimeAgo;
-import com.java.springportfolio.dto.PostRequest;
-import com.java.springportfolio.dto.PostResponse;
+import com.java.springportfolio.dto.*;
 import com.java.springportfolio.entity.Post;
 import com.java.springportfolio.entity.Topic;
 import com.java.springportfolio.entity.User;
@@ -11,6 +10,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.java.springportfolio.entity.VoteType.DOWNVOTE;
 import static com.java.springportfolio.entity.VoteType.UPVOTE;
@@ -47,7 +50,18 @@ public abstract class PostMapper {
     @Mapping(target = "upVote", expression = "java(isPostUpVoted(post))")
     @Mapping(target = "downVote", expression = "java(isPostDownVoted(post))")
     @Mapping(target = "commentCount", expression = "java(getCommentCount(post))")
-    public abstract PostResponse mapToDto(Post post);
+    public abstract PostPayload mapToPostPayloadDto(Post post);
+
+    public PostResponse mapToPostResponse(Page<Post> postPage) {
+        List<PostPayload> postPayload = postPage.getContent().stream().map(this::mapToPostPayloadDto).collect(Collectors.toList());
+        return PostResponse.builder()
+                .posts(postPayload)
+                .totalPages(postPage.getTotalPages())
+                .numberOfElementsPerPage(postPage.getNumberOfElements())
+                .numberOfElementsTotal(postPage.getTotalElements())
+                .pageNumber(postPage.getNumber())
+                .build();
+    }
 
     String getDuration(Post post) {
         return TimeAgo.using(post.getCreatedDate().toEpochMilli());

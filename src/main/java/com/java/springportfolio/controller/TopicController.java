@@ -1,5 +1,6 @@
 package com.java.springportfolio.controller;
 
+import com.java.springportfolio.dto.TopicPayload;
 import com.java.springportfolio.dto.TopicRequest;
 import com.java.springportfolio.dto.TopicResponse;
 import com.java.springportfolio.service.TopicService;
@@ -14,9 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/topics")
@@ -40,18 +40,15 @@ public class TopicController {
         return new ResponseEntity<>("The topic has been successfully updated!", HttpStatus.OK);
     }
 
-    @GetMapping("/newest")
-    public ResponseEntity<List<TopicResponse>> getAllTopicsSortedByCreationDate() {
-        return ResponseEntity.status(HttpStatus.OK).body(topicService.getAllTopicsSortedByCreationDate());
-    }
-
-    @GetMapping("/popular")
-    public ResponseEntity<List<TopicResponse>> getAllTopicsSortedByNumberOfPosts() {
-        return ResponseEntity.status(HttpStatus.OK).body(topicService.getTopicsSortedByNumberOfPosts());
+    @GetMapping
+    public ResponseEntity<TopicResponse> getAllTopics(@RequestParam String orderType,
+                                                      @RequestParam int pageNumber,
+                                                      @RequestParam int topicsPerPage) {
+        return ResponseEntity.status(HttpStatus.OK).body(topicService.getAllTopics(orderType, pageNumber, topicsPerPage));
     }
 
     @GetMapping("/{topicId}")
-    public ResponseEntity<TopicResponse> getTopic(@PathVariable Long topicId) {
+    public ResponseEntity<TopicPayload> getTopic(@PathVariable Long topicId) {
         return ResponseEntity.status(HttpStatus.OK).body(topicService.getTopic(topicId));
     }
 

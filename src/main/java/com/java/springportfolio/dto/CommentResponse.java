@@ -4,27 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
-import java.time.Instant;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentResponse {
-    private Long id;
-    private String text;
-    private Integer voteCount;
-    @Nullable
-    private Boolean upVoted;
-    @Nullable
-    private Boolean downVoted;
-    @Nullable
-    private Long parentCommentId;
-    private Instant createdDate;
-    private String duration;
-    private String userName;
-    private Long postId;
-    private Integer subCommentCount;
+
+    List<CommentPayload> comments;
+    private int numberOfElementsPerPage;
+    private long numberOfElementsTotal;
+    private int totalPages;
+    private int pageNumber;
 }

@@ -1,18 +1,22 @@
 package com.java.springportfolio.mapper;
 
 import com.github.marlonlom.utilities.timeago.TimeAgo;
+import com.java.springportfolio.dto.CommentPayload;
 import com.java.springportfolio.dto.CommentRequest;
 import com.java.springportfolio.dto.CommentResponse;
 import com.java.springportfolio.entity.Comment;
 import com.java.springportfolio.entity.Post;
 import com.java.springportfolio.entity.User;
 import com.java.springportfolio.entity.VoteType;
-import com.java.springportfolio.service.CommentService;
 import com.java.springportfolio.service.CommentVoteService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class CommentMapper {
@@ -46,7 +50,18 @@ public abstract class CommentMapper {
     @Mapping(target = "userName", source = "comment.user.username")
     @Mapping(target = "postId", source = "comment.post.postId")
     @Mapping(target = "subCommentCount", source = "comment.subCommentCount")
-    public abstract CommentResponse mapToDto(Comment comment);
+    public abstract CommentPayload mapToCommentPayloadDto(Comment comment);
+
+    public CommentResponse mapToCommentResponse(Page<Comment> commentPage) {
+        List<CommentPayload> commentPayload = commentPage.getContent().stream().map(this::mapToCommentPayloadDto).collect(Collectors.toList());
+        return CommentResponse.builder()
+                .comments(commentPayload)
+                .totalPages(commentPage.getTotalPages())
+                .numberOfElementsPerPage(commentPage.getNumberOfElements())
+                .numberOfElementsTotal(commentPage.getTotalElements())
+                .pageNumber(commentPage.getNumber())
+                .build();
+    }
 
     String getDuration(Comment comment) {
         return TimeAgo.using(comment.getCreatedDate().toEpochMilli());

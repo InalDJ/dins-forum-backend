@@ -1,9 +1,8 @@
 package com.java.springportfolio.service;
 
+import com.java.springportfolio.dto.PostPayload;
 import com.java.springportfolio.dto.PostRequest;
 import com.java.springportfolio.dto.PostResponse;
-
-import java.util.List;
 
 public interface PostService {
 
@@ -11,11 +10,11 @@ public interface PostService {
 
     void updatePost(PostRequest postRequest);
 
-    PostResponse getPost(Long postId);
+    PostPayload getPost(Long postId);
 
-    List<PostResponse> getAllPosts(String orderType, int pageNumber, int postsPerPage);
+    PostResponse getAllPosts(String orderType, int pageNumber, int postsPerPage);
 
-    List<PostResponse> getAllPostsByTopic(String topic);
+    PostResponse getAllPostsByTopic(String topicName, String orderType, int pageNumber, int postsPerPage);
 
     void deletePost(Long postId);
 }

@@ -1,5 +1,6 @@
 package com.java.springportfolio.service;
 
+import com.java.springportfolio.dto.TopicPayload;
 import com.java.springportfolio.dto.TopicRequest;
 import com.java.springportfolio.dto.TopicResponse;
 
@@ -11,11 +12,9 @@ public interface TopicService {
 
     void createTopic(TopicRequest topicRequest);
 
-    List<TopicResponse> getAllTopicsSortedByCreationDate();
+    TopicResponse getAllTopics(String orderType, int pageNumber, int topicsPerPage);
 
-    List<TopicResponse> getTopicsSortedByNumberOfPosts();
-
-    TopicResponse getTopic(Long id);
+    TopicPayload getTopic(Long id);
 
     void deleteTopic(Long id);
 }

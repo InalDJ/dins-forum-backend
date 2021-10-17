@@ -2,6 +2,7 @@ package com.java.springportfolio.service;
 
 import com.java.springportfolio.dao.PostRepository;
 import com.java.springportfolio.dao.TopicRepository;
+import com.java.springportfolio.dto.PostPayload;
 import com.java.springportfolio.dto.PostRequest;
 import com.java.springportfolio.dto.PostResponse;
 import com.java.springportfolio.entity.Post;
@@ -13,15 +14,11 @@ import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.PostMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.java.springportfolio.service.OrderType.NEW;
-import static com.java.springportfolio.service.OrderType.POPULAR;
+import static com.java.springportfolio.factory.PageableFactory.*;
 import static com.java.springportfolio.service.OrderType.findOrderType;
 
 @Slf4j
@@ -68,22 +65,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getPost(Long postId) {
+    public PostPayload getPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ItemNotFoundException("Post has not been found!"));
-        return postMapper.mapToDto(post);
+        return postMapper.mapToPostPayloadDto(post);
     }
 
     @Override
-    public List<PostResponse> getAllPosts(String orderType, int pageNumber, int postsPerPage) {
+    public PostResponse getAllPosts(String orderType, int pageNumber, int postsPerPage) {
         return getPostsSortedByOrderType(orderType, pageNumber, postsPerPage);
     }
 
     @Override
-    public List<PostResponse> getAllPostsByTopic(String topic) {
-        List<Post> posts = postRepository.findAllPostsByTopic(topic)
+    public PostResponse getAllPostsByTopic(String topicName, String orderType, int pageNumber, int postsPerPage) {
+        OrderType existingOrderType = findOrderType(orderType);
+        Pageable pageable = getPageableByOrderType(existingOrderType, pageNumber, postsPerPage);
+        Page<Post> postPage = postRepository.findAllPostsByTopic(topicName, pageable)
                 .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
-        return posts.stream().map(postMapper::mapToDto).collect(Collectors.toList());
+        return postMapper.mapToPostResponse(postPage);
     }
 
     @Override
@@ -94,29 +93,17 @@ public class PostServiceImpl implements PostService {
             throw new ItemNotFoundException("Post doesn't exist!");
         }
         postRepository.deleteById(postId);
-        log.info("Post with id: '{}' hs been deleted!", postId);
+        log.info("Post with id: '{}' has been deleted!", postId);
     }
 
-    private List<PostResponse> getPostsSortedByOrderType(String orderType, int pageNumber, int postsPerPage) {
+    private PostResponse getPostsSortedByOrderType(String orderType, int pageNumber, int postsPerPage) {
         if (orderType == null) {
             throw new PortfolioException("Order type is null!");
         }
-        Pageable pageable = getPageable(pageNumber, postsPerPage);
         OrderType existingOrderType = findOrderType(orderType);
-        if (existingOrderType.equals(NEW)) {
-            List<Post> posts = postRepository.findAllPostsOrderByCreatedDate(pageable)
-                    .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
-            return posts.stream().map(postMapper::mapToDto).collect(Collectors.toList());
-        }
-        if (existingOrderType.equals(POPULAR)) {
-            List<Post> posts = postRepository.findAllPostsOrderByNumberOfVotes(pageable)
-                    .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
-            return posts.stream().map(postMapper::mapToDto).collect(Collectors.toList());
-        }
-        throw new ItemNotFoundException("There are no posts!");
-    }
-
-    private Pageable getPageable(int pageNumber, int postsPerPage) {
-        return PageRequest.of(pageNumber, postsPerPage);
+        Pageable pageable = getPageableByOrderType(existingOrderType, pageNumber, postsPerPage);
+        Page<Post> postPage = postRepository.findAllPosts(pageable)
+                .orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
+        return postMapper.mapToPostResponse(postPage);
     }
 }

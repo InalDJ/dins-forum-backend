@@ -5,23 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponse {
 
-    private Long id;
-    private String postName;
-    private String description;
-    private String userName;
-    private String topicName;
-    private Integer voteCount;
-    private String duration;
-    private String createdDate;
-    private boolean upVote;
-    private boolean downVote;
-    private Integer commentCount;
+    private List<PostPayload> posts;
+    private int numberOfElementsPerPage;
+    private int totalPages;
+    private int pageNumber;
+    private long numberOfElementsTotal;
 }
 
 

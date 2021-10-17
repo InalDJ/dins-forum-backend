@@ -2,6 +2,7 @@ package com.java.springportfolio.service;
 
 import com.java.springportfolio.dao.TopicRepository;
 import com.java.springportfolio.dao.UserRepository;
+import com.java.springportfolio.dto.TopicPayload;
 import com.java.springportfolio.dto.TopicRequest;
 import com.java.springportfolio.dto.TopicResponse;
 import com.java.springportfolio.entity.Topic;
@@ -12,10 +13,12 @@ import com.java.springportfolio.exception.PortfolioException;
 import com.java.springportfolio.mapper.TopicMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import static com.java.springportfolio.factory.PageableFactory.getTopicPageableByOrderType;
+import static com.java.springportfolio.service.OrderType.findOrderType;
 
 @Slf4j
 @Service
@@ -24,7 +27,6 @@ public class TopicServiceImpl implements TopicService {
 
     private final TopicRepository topicRepository;
     private final TopicMapper topicMapper;
-    private final UserRepository userRepository;
     private final AuthService authService;
 
     @Override
@@ -63,28 +65,15 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public List<TopicResponse> getAllTopicsSortedByCreationDate() {
-        List<Topic> topics = topicRepository.findAllTopicsOrderByCreatedDate();
-        if (topics.isEmpty()) {
-            throw new ItemNotFoundException("There are no existing topics!");
-        }
-        return topics.stream().map(topicMapper::mapToDto).collect(Collectors.toList());
+    public TopicResponse getAllTopics(String orderType, int pageNumber, int topicsPerPage) {
+        return getAllTopicsSortedByOrderType(orderType, pageNumber, topicsPerPage);
     }
 
     @Override
-    public List<TopicResponse> getTopicsSortedByNumberOfPosts() {
-        List<Topic> topics = topicRepository.findAllTopicsOrderByNumberOfPosts();
-        if (topics.isEmpty()) {
-            throw new ItemNotFoundException("There are no existing topics!");
-        }
-        return topics.stream().map(topicMapper::mapToDto).collect(Collectors.toList());
-    }
-
-    @Override
-    public TopicResponse getTopic(Long id) {
+    public TopicPayload getTopic(Long id) {
         Topic topic = topicRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException("Topic not found!"));
-        return topicMapper.mapToDto(topic);
+        return topicMapper.mapToTopicPayload(topic);
     }
 
     @Override
@@ -95,5 +84,12 @@ public class TopicServiceImpl implements TopicService {
         }
         topicRepository.deleteById(id);
         log.info("The topic with id: '{}' has been removed from the database!", id);
+    }
+
+    private TopicResponse getAllTopicsSortedByOrderType(String orderType, int pageNumber, int topicsPerPage) {
+        OrderType existingOrderType = findOrderType(orderType);
+        Pageable pageable = getTopicPageableByOrderType(existingOrderType, pageNumber, topicsPerPage);
+        Page<Topic> topicPage = topicRepository.findAllTopics(pageable).orElseThrow(() -> new ItemNotFoundException("There are no existing posts!"));
+        return topicMapper.mapToTopicResponse(topicPage);
     }
 }

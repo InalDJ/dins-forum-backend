@@ -5,17 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TopicResponse {
 
-    private Long id;
-    private String name;
-    private String description;
-    private String createdDate;
-    private String userName;
-    private Integer numberOfPosts;
-    private String duration;
+    private List<TopicPayload> topics;
+    private int numberOfElementsPerPage;
+    private int totalPages;
+    private int pageNumber;
+    private long numberOfElementsTotal;
 }
