@@ -43,6 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/api/comments/**").permitAll()
                 .antMatchers(GET, "/api/topics/**").permitAll()
                 .antMatchers(GET, "/api/topics/**").permitAll()
+                .antMatchers(POST, "/api/posts/upload/image").permitAll()
+                .antMatchers(POST, "/api/posts/upload/image").permitAll()
+                .antMatchers(POST, "/api/posts/upload/image/**").permitAll()
+                .antMatchers("/images/**").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

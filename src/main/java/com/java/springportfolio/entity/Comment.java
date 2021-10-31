@@ -56,4 +56,8 @@ public class Comment {
     @Nullable
     @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentVote> commentVotes;
+
+    @Nullable
+    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FileRecord> fileRecords;
 }

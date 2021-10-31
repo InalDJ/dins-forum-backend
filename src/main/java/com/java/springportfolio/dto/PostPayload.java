@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,4 +25,6 @@ public class PostPayload {
     private boolean upVote;
     private boolean downVote;
     private Integer commentCount;
+    @Nullable
+    private List<FilePayload> files;
 }

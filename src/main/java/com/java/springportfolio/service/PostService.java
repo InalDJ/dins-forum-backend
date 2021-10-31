@@ -17,4 +17,6 @@ public interface PostService {
     PostResponse getAllPostsByTopic(String topicName, String orderType, int pageNumber, int postsPerPage);
 
     void deletePost(Long postId);
+
+    PostResponse getAllPostsByUser(String userName, int pageNumber, int postsPerPage);
 }

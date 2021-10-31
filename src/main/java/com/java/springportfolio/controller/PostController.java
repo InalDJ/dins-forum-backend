@@ -55,6 +55,14 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getAllPostsByTopic(topicName, orderType, pageNumber, postsPerPage));
     }
 
+    @GetMapping("/by-user")
+    public ResponseEntity<PostResponse> getAllPostsByUser(@RequestParam String userName,
+                                                          @RequestParam int pageNumber,
+                                                          @RequestParam int postsPerPage) {
+        dtoValidator.validateMandatoryRequestParam("userName", userName);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getAllPostsByUser(userName, pageNumber, postsPerPage));
+    }
+
     @GetMapping("/{postId}")
     public ResponseEntity<PostPayload> getPost(@PathVariable Long postId) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));

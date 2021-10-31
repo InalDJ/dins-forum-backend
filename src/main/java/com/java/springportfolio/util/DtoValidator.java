@@ -1,17 +1,12 @@
 package com.java.springportfolio.util;
 
-import com.java.springportfolio.dto.CommentRequest;
-import com.java.springportfolio.dto.LoginRequest;
-import com.java.springportfolio.dto.PostRequest;
-import com.java.springportfolio.dto.RefreshTokenRequest;
-import com.java.springportfolio.dto.RegisterRequest;
-import com.java.springportfolio.dto.TopicRequest;
-import com.java.springportfolio.dto.VoteRequest;
+import com.java.springportfolio.dto.*;
 import com.java.springportfolio.entity.VoteCategory;
 import com.java.springportfolio.entity.VoteType;
 import com.java.springportfolio.exception.PortfolioException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.java.springportfolio.entity.VoteCategory.COMMENTVOTE;
 import static com.java.springportfolio.entity.VoteCategory.POSTVOTE;
@@ -30,6 +25,24 @@ public class DtoValidator {
     private static final int TEXT_LENGTH = 500;
     private static final int POST_NAME_LENGTH = 100;
     private static final int DESCRIPTION_LENGTH = 50000;
+
+    public void validateMultipartFile(MultipartFile file) {
+        if (file == null) {
+            throw new PortfolioException("Multipart file is null!");
+        }
+    }
+
+    public void validateMandatoryRequestParam(String requestParamName, String requestParamValue) {
+        if (requestParamValue == null || requestParamValue.equals("")) {
+            throw new PortfolioException("Mandatory equest param '" + requestParamName + "' is empty or null!");
+        }
+    }
+
+    public void validateImageDeleteRequest(ImageDeleteRequest imageDeleteRequest) {
+        if (imageDeleteRequest == null || imageDeleteRequest.getImagePathList() == null || imageDeleteRequest.getImagePathList().isEmpty()) {
+            throw new PortfolioException("Delete image request is null");
+        }
+    }
 
     public void validateTopicRequest(TopicRequest topicRequest) {
         if (topicRequest == null) {

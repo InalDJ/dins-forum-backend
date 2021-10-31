@@ -6,19 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
-import java.util.List;
-
-@Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class PostRequest {
+@NoArgsConstructor
+@Builder
+@Data
+public class FilePayload {
 
+    @Nullable
+    private Long id;
+    private String url;
+    private String path;
     @Nullable
     private Long postId;
-    private String postName;
-    private String description;
-    private Long topicId;
     @Nullable
-    private List<FilePayload> files;
+    private Long commentId;
 }

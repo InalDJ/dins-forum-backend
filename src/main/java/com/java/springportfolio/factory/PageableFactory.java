@@ -26,7 +26,7 @@ public class PageableFactory {
         return PageRequest.of(pageNumber, itemsPerPage, sort);
     }
 
-    private static Pageable getPageableWithSortingByDate(int pageNumber, int itemsPerPage) {
+    public static Pageable getPageableWithSortingByDate(int pageNumber, int itemsPerPage) {
         Sort sortByDate = getSortByDate();
         return getPageableWithSorting(pageNumber, itemsPerPage, sortByDate);
     }
