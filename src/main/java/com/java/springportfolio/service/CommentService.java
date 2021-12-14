@@ -16,9 +16,11 @@ public interface CommentService {
 
     CommentResponse getAllComments(String orderType, int pageNumber, int commentsQuantity);
 
-    List<CommentPayload> getCommentsByPostAndParentComment(Long postId, Long parentCommentId);
+    List<CommentPayload> getCommentsByPostAndParentComment(Long parentCommentId);
 
     CommentResponse getAllCommentsByPost(Long postId, int pageNumber, int commentsQuantity);
+
+    CommentResponse getAllCommentsByUser(String userName, int pageNumber, int commentsQuantity);
 
     CommentPayload getComment(Long commentId);
 }

@@ -21,8 +21,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("select c from Comment c where c.post.postId = :postId and c.parentCommentId is null")
     Optional<Page<Comment>> findAllCommentsByPost(@Param("postId") Long postId, Pageable pageable);
 
-    @Query("select c from Comment c where c.post.postId = :postId and c.parentCommentId = :parentCommentId")
-    Optional<List<Comment>> findAllCommentsByPostAndParentCommentId(@Param("postId") Long postId, @Param("parentCommentId") Long parentCommentId);
+    @Query("select c from Comment c where c.post.user.username = :userName")
+    Optional<Page<Comment>> findAllCommentsByUser(@Param("userName") String userName, Pageable pageable);
+
+    @Query("select c from Comment c where c.parentCommentId = :parentCommentId")
+    Optional<List<Comment>> findAllCommentsByPostAndParentCommentId(@Param("parentCommentId") Long parentCommentId);
 
     @Modifying
     @Query("update Comment c set c.subCommentCount = c.subCommentCount + 1 where c.id = :id")

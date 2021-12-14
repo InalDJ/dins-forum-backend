@@ -42,14 +42,21 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllCommentsByPost(postId, pageNumber, commentQuantity));
     }
 
+    @GetMapping("/by-user")
+    public ResponseEntity<CommentResponse> getAllCommentsByUser(@RequestParam String userName,
+                                                                @RequestParam int pageNumber,
+                                                                @RequestParam int commentQuantity) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getAllCommentsByUser(userName, pageNumber, commentQuantity));
+    }
+
     @GetMapping("/{commentId}")
     public ResponseEntity<CommentPayload> getComment(@PathVariable Long commentId) {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getComment(commentId));
     }
 
-    @GetMapping("/post/{postId}/comment/{parentCommentId}")
-    public ResponseEntity<List<CommentPayload>> getSubCommentsByPostAndParentComment(@PathVariable Long postId, @PathVariable Long parentCommentId) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentsByPostAndParentComment(postId, parentCommentId));
+    @GetMapping("parent-comment-id/{parentCommentId}")
+    public ResponseEntity<List<CommentPayload>> getSubCommentsByPostAndParentComment(@PathVariable Long parentCommentId) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentsByPostAndParentComment(parentCommentId));
     }
 
     @PostMapping
