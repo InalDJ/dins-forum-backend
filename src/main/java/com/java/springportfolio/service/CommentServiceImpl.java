@@ -104,9 +104,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentPayload> getCommentsByPostAndParentComment(Long postId, Long parentCommentId) {
+    public CommentResponse getAllCommentsByUser(String userName, int pageNumber, int commentQuantity) {
+        Pageable pageable = getPageableWithSortingByDate(pageNumber, commentQuantity);
+        Page<Comment> commentPage = commentRepository.findAllCommentsByUser(userName, pageable).orElse(Page.empty());
+        return commentMapper.mapToCommentResponse(commentPage);
+    }
+
+    @Override
+    public List<CommentPayload> getCommentsByPostAndParentComment(Long parentCommentId) {
         log.info("Parentcommentid = " + parentCommentId);
-        List<Comment> comments = commentRepository.findAllCommentsByPostAndParentCommentId(postId, parentCommentId).orElseThrow(() -> new ItemNotFoundException("The comment list is null!"));
+        List<Comment> comments = commentRepository.findAllCommentsByPostAndParentCommentId(parentCommentId).orElseThrow(() -> new ItemNotFoundException("The comment list is null!"));
         return comments.stream().map(commentMapper::mapToCommentPayloadDto).collect(Collectors.toList());
     }
 

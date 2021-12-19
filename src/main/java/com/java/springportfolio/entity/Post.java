@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -71,4 +72,24 @@ public class Post {
     @Nullable
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vote> votes;
+
+    public void addFileRecord(FileRecord fileRecord) {
+        if (fileRecord == null) {
+            return;
+        }
+        if (fileRecords == null) {
+            fileRecords = new ArrayList<>();
+        }
+        fileRecords.add(fileRecord);
+        fileRecord.setPost(this);
+    }
+
+    public void addFileRecordList(List<FileRecord> fileRecordList) {
+        if (fileRecordList == null || fileRecordList.isEmpty()) {
+            return;
+        }
+        for (FileRecord fileRecord : fileRecordList) {
+            addFileRecord(fileRecord);
+        }
+    }
 }

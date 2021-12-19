@@ -75,15 +75,11 @@ public class PostMapper {
         return existingPostEntity;
     }
 
-    public List<FileRecord> mapFilesPayloadToFileRecordEntityList(List<FilePayload> filesPayload, User user, Post post) {
-        return mapFilesPayloadToFileRecordEntityList(filesPayload, user, post, null);
-    }
-
     public List<FileRecord> mapFilesPayloadToFileRecordEntityList(List<FilePayload> filesPayload, User user) {
-        return mapFilesPayloadToFileRecordEntityList(filesPayload, user, null, null);
+        return mapFilesPayloadToFileRecordEntityList(filesPayload, user, null);
     }
 
-    public List<FileRecord> mapFilesPayloadToFileRecordEntityList(List<FilePayload> filesPayload, User user, Post post, Comment comment) {
+    public List<FileRecord> mapFilesPayloadToFileRecordEntityList(List<FilePayload> filesPayload, User user, Comment comment) {
         if (filesPayload == null || filesPayload.isEmpty()) {
             return null;
         }
@@ -93,7 +89,7 @@ public class PostMapper {
                     .url(filePayload.getUrl())
                     .path(filePayload.getPath())
                     .createdDate(Instant.now())
-                    .post(post)
+                    //.post(post)
                     .userId(user.getUserId())
                     .comment(comment)
                     .build();
