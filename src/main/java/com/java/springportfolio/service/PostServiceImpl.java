@@ -45,12 +45,10 @@ public class PostServiceImpl implements PostService {
         Topic topic = topicRepository.findById(postRequest.getTopicId())
                 .orElseThrow(() -> new ItemNotFoundException("Topic has not been found!"));
         User currentUser = authService.getCurrentUser();
-        Post postSaved = postRepository.save(postMapper.mapPostRequestToPostEntity(postRequest, currentUser, topic));
-        List<FileRecord> fileRecordEntityListToSave = postMapper.mapFilesPayloadToFileRecordEntityList(postRequest.getFiles(), currentUser, postSaved);
-        List<FileRecord> fileRecordsSaved = mediaService.saveFileRecordsToDatabase(fileRecordEntityListToSave);
-        postSaved.setFileRecords(fileRecordsSaved);
-        postRepository.save(postSaved);
-        log.info("The post with name: '{}' has been saved to the database!", postRequest.getPostName());
+        List<FileRecord> fileRecordEntityListToSave = postMapper.mapFilesPayloadToFileRecordEntityList(postRequest.getFiles(), currentUser);
+        Post postToSave = postMapper.mapPostRequestToPostEntity(postRequest, currentUser, topic);
+        postToSave.addFileRecordList(fileRecordEntityListToSave);
+        postRepository.saveAndFlush(postToSave);
     }
 
     @Override
@@ -83,7 +81,7 @@ public class PostServiceImpl implements PostService {
             return null;
         }
         if ((filePayloadList != null && !filePayloadList.isEmpty()) && (existingFileRecordEntityList == null || existingFileRecordEntityList.isEmpty())) {
-            List<FileRecord> updatedFileRecordList = postMapper.mapFilesPayloadToFileRecordEntityList(filePayloadList, user, existingPost);
+            List<FileRecord> updatedFileRecordList = postMapper.mapFilesPayloadToFileRecordEntityList(filePayloadList, user);
             mediaService.saveFileRecordsToDatabase(updatedFileRecordList);
             return updatedFileRecordList;
         }
@@ -102,7 +100,7 @@ public class PostServiceImpl implements PostService {
         }
         mediaService.deleteFileRecordsFromDatabase(existingFileRecordEntityList);
         return mediaService.saveFileRecordsToDatabase(
-                postMapper.mapFilesPayloadToFileRecordEntityList(filePayloadList, user, existingPost));
+                postMapper.mapFilesPayloadToFileRecordEntityList(filePayloadList, user));
     }
 
     @Override
