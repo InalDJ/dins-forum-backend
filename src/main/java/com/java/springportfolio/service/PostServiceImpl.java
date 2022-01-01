@@ -37,7 +37,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void createPost(PostRequest postRequest) {
-        log.info("Creating a post...");
         if (postRepository.existsByPostName(postRequest.getPostName())) {
             log.error("Post with name: '{}' already exists!", postRequest.getPostName());
             throw new ItemAlreadyExistsException("Post with the name: " + postRequest.getPostName() + " already exists!");
@@ -138,7 +137,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long postId) {
-        log.info("Deleting post with id: '{}'...", postId);
         if (!postRepository.existsById(postId)) {
             log.error("Post with id: '{}' does not exist!", postId);
             throw new ItemNotFoundException("Post doesn't exist!");

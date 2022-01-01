@@ -37,7 +37,6 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public void createComment(CommentRequest commentRequest) {
-        log.info("Creating a comment...");
         Post post = postRepository.findById(commentRequest.getPostId())
                 .orElseThrow(() -> new ItemNotFoundException("Post with id: " + commentRequest.getPostId() + " has not been found"));
         User currentUser = authService.getCurrentUser();
@@ -51,12 +50,10 @@ public class CommentServiceImpl implements CommentService {
             }
         }
         commentRepository.save(commentMapper.mapToCreateNewComment(commentRequest, currentUser, post));
-        log.info("The comment has been saved to the database");
     }
 
     @Override
     public void updateComment(CommentRequest commentRequest) {
-        log.info("Updating comment with id: {}'", commentRequest.getId());
         if (commentRequest.getId() == null) {
             log.error("Comment id is null. The comment cannot be updated!");
             throw new PortfolioException("Comment id is null!");
@@ -69,7 +66,6 @@ public class CommentServiceImpl implements CommentService {
             throw new PortfolioException("Only comment authors can update comments!");
         }
         commentRepository.save(commentMapper.mapToUpdateExistingComment(commentRequest, comment));
-        log.info("Comment with id: '{}' has been saved to the database!", commentRequest.getId());
     }
 
     @Override

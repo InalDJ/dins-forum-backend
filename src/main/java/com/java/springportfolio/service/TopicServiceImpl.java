@@ -49,19 +49,16 @@ public class TopicServiceImpl implements TopicService {
             throw new ItemAlreadyExistsException("Topic with name: " + topicRequest.getName() + " already exists!");
         }
         topicRepository.save(topicMapper.mapToUpdateExistingTopic(topicRequest, existingTopicById));
-        log.info("Topic with id: '{}' has been updated!", existingTopicById.getId());
     }
 
     @Override
     public void createTopic(TopicRequest topicRequest) {
-        log.info("Creating a topic...");
         if (topicRepository.existsByName(topicRequest.getName())) {
             log.error("Topic with name: '{}' already exists!", topicRequest.getName());
             throw new ItemAlreadyExistsException("Topic with the name: " + topicRequest.getName() + " already exists!");
         }
         User currentUser = authService.getCurrentUser();
         topicRepository.save(topicMapper.mapToCreateNewTopic(topicRequest, currentUser));
-        log.info("The topic with name: '{}' has been created!", topicRequest.getName());
     }
 
     @Override
